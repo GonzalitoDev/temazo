@@ -66,7 +66,11 @@ export function LoginDialog() {
           setErr("Ya hay una cuenta con ese email (puede ser de Fogón u otra de tus apps). Entrá con esa contraseña.");
           return;
         }
-        if (!data.session) setSent(true);
+        if (!data.session) {
+          // las cuentas nuevas quedan confirmadas solas: entramos directo
+          const r = await supabase.auth.signInWithPassword({ email, password: pass });
+          if (r.error) setSent(true);
+        }
       }
     } catch (e) {
       setErr(friendlyError(e));
