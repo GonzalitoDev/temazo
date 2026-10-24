@@ -134,6 +134,21 @@ let booted = false;
 export async function boot() {
   if (booted) return;
   booted = true;
+  // link de confirmación vencido o ya usado: Supabase vuelve con #error=...
+  if (/error_code=|error_description=/.test(location.hash)) {
+    const p = new URLSearchParams(location.hash.slice(1));
+    const code = p.get("error_code") ?? "";
+    history.replaceState(null, "", location.pathname + location.search);
+    setTimeout(
+      () =>
+        toast(
+          code === "otp_expired" || /expired|invalid/i.test(p.get("error_description") ?? "")
+            ? "Ese link ya no sirve, pero tu cuenta ya está confirmada. Entrá con tu email y contraseña."
+            : "No se pudo abrir el link del mail. Entrá con tu email y contraseña.",
+        ),
+      300,
+    );
+  }
   const onHash = () => {
     const mobile = window.innerWidth < 760;
     setState({ route: parse(location.hash), menu: null, full: false, panel: mobile ? null : state.panel });
