@@ -105,6 +105,7 @@ export function TopBar({ scrolled }: { scrolled: boolean }) {
   const me = useStore((s) => s.me);
   const session = useStore((s) => s.session);
   const [settings, setSettings] = useState(false);
+  const pending = useStore((s) => (s.isAdmin ? s.pendingCount : 0));
   const q = route.name === "search" ? route.q : "";
   const [text, setText] = useState(q);
   const input = useRef<HTMLInputElement>(null);
@@ -170,12 +171,16 @@ export function TopBar({ scrolled }: { scrolled: boolean }) {
               openMenu(e, [
                 { label: "Perfil", icon: "user", onClick: () => (location.hash = href({ name: "user", username: me.username })) },
                 { label: "Ajustes", icon: "edit", onClick: () => setSettings(true) },
+                ...(getState().isAdmin
+                  ? [{ label: `Panel de admin${getState().pendingCount ? ` (${getState().pendingCount})` : ""}`, icon: "lock", onClick: () => (location.hash = href({ name: "admin" })) }]
+                  : []),
                 "sep",
                 { label: "Cerrar sesión", icon: "logout", onClick: () => void signOut() },
               ])
             }
           >
             {me.display_name.slice(0, 1).toUpperCase()}
+            {pending > 0 && <span className="avatar-badge" aria-label={`${pending} cuentas esperando aprobación`}>{pending}</span>}
           </button>
         ) : session ? null : (
           <button className="btn sm" onClick={() => setState({ login: {} })}>

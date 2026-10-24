@@ -14,6 +14,8 @@ export type MyPlaylist = { id: string; owner_id: string; name: string; descripti
 export type PTrack = { id: string; playlist_id: string; track_id: string; track: Track; position: number; added_at: string };
 export type Follow = { artist: Artist; at: string };
 export type NowPlaying = { user_id: string; track: Track; is_playing: boolean; updated_at: string };
+export type Access = "none" | "pending" | "rejected" | "approved";
+export type AccessRow = { user_id: string; email: string; status: Exclude<Access, "none">; requested_at: string; decided_at: string | null; username: string | null; display_name: string | null };
 export type Panel = "queue" | "lyrics" | "friends" | null;
 export type MenuItem = { label: string; icon?: string; onClick: () => void; danger?: boolean; disabled?: boolean } | "sep";
 
@@ -22,6 +24,9 @@ export type State = {
   session: Session | null;
   me: Profile | null;
   needsProfile: boolean;
+  access: Access;
+  isAdmin: boolean;
+  pendingCount: number;
   route: Route;
   likes: Record<string, Like>;
   playlists: Record<string, MyPlaylist>;
@@ -53,6 +58,9 @@ const initial: State = {
   session: null,
   me: null,
   needsProfile: false,
+  access: "none",
+  isAdmin: false,
+  pendingCount: 0,
   route: { name: "home" },
   likes: {},
   playlists: {},
@@ -171,12 +179,22 @@ async function onSession(s: Session | null) {
     void supabase.removeChannel(rt);
     rt = null;
   }
-  setState({ session: s, me: null, needsProfile: false, likes: {}, playlists: {}, plTracks: {}, follows: {}, history: [], friends: {}, followers: [], nowPlaying: {} });
+  setState({ session: s, me: null, needsProfile: false, access: "none", isAdmin: false, pendingCount: 0, likes: {}, playlists: {}, plTracks: {}, follows: {}, history: [], friends: {}, followers: [], nowPlaying: {} });
   if (!s) {
     setState({ ready: true });
     return;
   }
   try {
+    // primero: ¿esta cuenta está aprobada para usar Temazo?
+    const acc = await supabase.rpc("temazo_my_access");
+    if (acc.error) throw acc.error;
+    const row = (acc.data as { status: Access; is_admin: boolean }[])[0];
+    setState({ access: row?.status ?? "pending", isAdmin: !!row?.is_admin, login: null });
+    if (row?.status !== "approved") {
+      setState({ ready: true });
+      return;
+    }
+    if (row.is_admin) void refreshPendingCount();
     const { data, error } = await supabase.from("temazo_profiles").select("*").eq("id", s.user.id).maybeSingle();
     if (error) throw error;
     if (!data) {
@@ -516,4 +534,30 @@ export function openMenu(e: { clientX: number; clientY: number; preventDefault?:
   e.preventDefault?.();
   e.stopPropagation?.();
   setState({ menu: { x: e.clientX, y: e.clientY, items } });
+}
+
+/* ---------- aprobación de cuentas ---------- */
+
+export async function recheckAccess() {
+  const s = state.session;
+  if (s) await onSession(s);
+}
+
+export async function refreshPendingCount() {
+  const { data, error } = await supabase.rpc("temazo_admin_list");
+  if (error) return;
+  setState({ pendingCount: (data as AccessRow[]).filter((r) => r.status === "pending").length });
+}
+
+export async function adminList(): Promise<AccessRow[]> {
+  const { data, error } = await supabase.rpc("temazo_admin_list");
+  if (error) throw error;
+  const rows = data as AccessRow[];
+  setState({ pendingCount: rows.filter((r) => r.status === "pending").length });
+  return rows;
+}
+
+export async function adminSet(userId: string, status: AccessRow["status"]) {
+  const { error } = await supabase.rpc("temazo_admin_set", { p_user: userId, p_status: status });
+  if (error) throw error;
 }

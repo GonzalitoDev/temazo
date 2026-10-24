@@ -10,6 +10,7 @@ export type Route =
   | { name: "liked" }
   | { name: "library" }
   | { name: "user"; username: string }
+  | { name: "admin" }
   | { name: "notfound" };
 
 const TABS = ["all", "tracks", "artists", "playlists"] as const;
@@ -39,6 +40,7 @@ export function parse(hash: string): Route {
   if (a === "lista" && b) return { name: "list", id: b };
   if (a === "me-gusta") return { name: "liked" };
   if (a === "biblioteca") return { name: "library" };
+  if (a === "admin") return { name: "admin" };
   if (a === "u" && b) return { name: "user", username: b.toLowerCase() };
   return { name: "notfound" };
 }
@@ -72,6 +74,8 @@ export function href(r: Route): string {
       return "#/biblioteca";
     case "user":
       return `#/u/${enc(r.username)}`;
+    case "admin":
+      return "#/admin";
     default:
       return "#/";
   }

@@ -10,12 +10,14 @@ import { GenrePage, HomePage, SearchPage } from "@/components/Discover";
 import { APlaylistPage, ArtistPage, TrackPage } from "@/components/Detail";
 import { LibraryPage, LikedPage, ListPage, UserPage } from "@/components/Mine";
 import { Empty } from "@/components/ui";
+import { AdminPage, PendingScreen } from "@/components/Admin";
 
 export default function Page() {
   const route = useStore((s) => s.route);
   const needsProfile = useStore((s) => s.needsProfile);
   const panel = useStore((s) => s.panel);
   const hasTrack = useStore((s) => !!s.queue.current);
+  const blocked = useStore((s) => !!s.session && (s.access === "pending" || s.access === "rejected"));
   const scroller = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -66,6 +68,9 @@ export default function Page() {
     case "user":
       page = <UserPage username={route.username} />;
       break;
+    case "admin":
+      page = <AdminPage />;
+      break;
     default:
       page = (
         <div className="page">
@@ -73,6 +78,14 @@ export default function Page() {
         </div>
       );
   }
+
+  if (blocked)
+    return (
+      <>
+        <PendingScreen />
+        <Toast />
+      </>
+    );
 
   return (
     <div className={"app" + (panel ? " with-panel" : "") + (hasTrack ? " has-track" : "")} data-panel={panel ?? ""}>

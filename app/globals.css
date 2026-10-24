@@ -2266,6 +2266,100 @@ h3 {
   }
 }
 
+/* ---------- aprobación y admin ---------- */
+
+.pending {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+  background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%), var(--bg);
+}
+.pending-card {
+  width: min(100%, 460px);
+  background: var(--panel);
+  border-radius: 14px;
+  padding: 32px 28px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.pending-card h1 {
+  font-family: var(--display);
+  font-size: 28px;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-top: 8px;
+}
+.pending-card p {
+  margin: 0;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.pending-email {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--ink) !important;
+}
+.pending-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+.avatar-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 11px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+.chip-count {
+  margin-left: 8px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.admin-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+.admin-row:hover {
+  background: var(--hover);
+}
+.admin-row .avatar {
+  border: 0;
+  width: 40px;
+  height: 40px;
+}
+.admin-row .row-text {
+  flex: 1;
+}
+.admin-actions {
+  display: flex;
+  gap: 8px;
+  flex: none;
+}
+
 /* ---------- celular ---------- */
 
 @media (max-width: 760px) {
@@ -2467,6 +2561,13 @@ h3 {
   }
   .lib-tools {
     flex-wrap: wrap;
+  }
+  .admin-row {
+    flex-wrap: wrap;
+  }
+  .admin-actions {
+    width: 100%;
+    padding-left: 52px;
   }
 
   .mini {
