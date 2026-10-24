@@ -1,0 +1,34 @@
+feature,area,priority,original,clone,notes
+Reproductor persistente (play pausa siguiente anterior),reproductor,must,yes,no,S10 un solo <audio> para toda la app
+Barra de progreso y volumen,reproductor,must,yes,no,S10
+Cola: contexto + agregados a mano,reproductor,must,yes,no,F05 S11
+Aleatorio y repetir (todo / uno),reproductor,must,yes,no,F05
+Inicio con tendencias y filas por género,descubrir,must,yes,no,S02 Audius trending
+Buscar canciones artistas y playlists,buscar,must,yes,no,S03 F02
+Grilla de géneros,buscar,must,yes,no,S03 S04
+Página de artista con populares,artistas,must,yes,no,S05
+Página de playlist de Audius,playlists,must,yes,no,S06
+Me gusta (corazón) y lista de me gusta,biblioteca,must,yes,no,S08 F03
+Crear / renombrar / borrar playlists propias,playlists,must,yes,no,S07 F04
+Agregar y quitar temas de una playlist,playlists,must,yes,no,F04
+Tu biblioteca,biblioteca,must,yes,no,S09
+Login y perfil,cuenta,must,yes,no,Supabase Auth compartido con tus otras apps
+Reordenar temas arrastrando,playlists,should,yes,no,
+Seguir artistas,artistas,should,yes,no,F06
+Escuchado recientemente,biblioteca,should,yes,no,History
+Pantalla de reproducción con color de la tapa,reproductor,should,yes,no,S12
+Controles del sistema y pantalla bloqueada,reproductor,should,yes,no,Media Session API F09
+Atajos de teclado (espacio flechas),reproductor,should,yes,no,
+Artistas parecidos,artistas,should,yes,no,/users/{id}/related
+Celular: barra inferior y mini reproductor,general,should,yes,no,
+Letras sincronizadas,reproductor,should,yes,no,LRCLIB cuando exista
+Amigos y escuchando ahora en vivo,social,should,yes,no,S14 F07 Supabase Realtime
+Playlists públicas y perfil de usuario,social,could,yes,no,S15
+Compartir link de tema o playlist,social,could,yes,no,
+Precarga del siguiente tema,reproductor,could,yes,no,
+Ecualizador animado en lo que suena,ui,could,yes,no,
+Catálogo de Spotify,catálogo,skip,yes,skip,licencias de los sellos
+Podcasts y audiolibros,catálogo,skip,yes,skip,
+Spotify Connect y Jam,social,skip,yes,skip,
+Descargas offline,reproductor,skip,yes,skip,
+Wrapped,social,skip,yes,skip,
